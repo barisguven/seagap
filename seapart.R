@@ -1,11 +1,13 @@
 library(ggplot2) # görselleştirme için
 library(dplyr) # tibble oluşturmak için
 
-# Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde tesadüfi olarak koltuk numarası belirler. Bu tip koltukların tamamı dolduktan sonra kalan koltuklar arasından yine tesadüfi olarak koltuk numarası belirler.
+# Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde, bu tip koltukların tamamı dolduktan sonra da kalan koltuklar arasından rastlantısal olarak koltuk numarası belirler.
 
-seapart = function(n = 10, users = 20 * n * 0.5, seed = 321, verbose = TRUE) {
+seapart = function(sira_sayisi = 10, kullanici_sayisi = 20 * sira_sayisi * 0.5, seed = 321, verbose = TRUE) {
   set.seed(seed)
 
+  n = sira_sayisi
+  users = kullanici_sayisi
   block1 = c(1:(n * 5)) # ilk beşlik blok
   block2 = c((5 * n + 1):(15 * n)) # onluk blok
   block3 = c((15 * n + 1):(20 * n)) # ikinci beşlik blok
@@ -187,21 +189,44 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321, verbose = TRUE) {
   return(seating_data)
 }
 
-seating_data = seapart(n = 10, users = 60)
-
-seating_data |>
+seaplot = function(seating_data) {
+  seating_data |>
   ggplot(aes(seat_x_grid, seat_y_grid, label = seats)) +
   geom_point(shape = 0, size = 9.5) +
   geom_point(
-    aes(seat_x, seat_y), shape = 15, color = "rosybrown", size = 8
+    aes(seat_x, seat_y), shape = 15, color = "rosybrown", 
+    size = 9.5, na.rm = TRUE
   ) +
   geom_text() +
-  labs(x = NULL, y = NULL) +
+  labs(
+    x = NULL, y = NULL,
+    title = "Raslantısal oturma deseni",
+    subtitle = paste0("Kullanıcı sayısı: ", sum(!is.na(seating_data$seat_order))) 
+  ) +
   theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
     axis.ticks = element_blank(), 
     axis.text = element_blank(), 
     panel.grid.major = element_blank(), 
     panel.grid.minor = element_blank(),
     legend.position = "none"
   )
+}
+
+seapart(sira_sayisi =  10, kullanici_sayisi = 20) |>
+  seaplot()
+ggsave("users_20.jpeg", width = 8, height = 5, units = "in")
+
+seapart(sira_sayisi =  10, kullanici_sayisi = 70) |>
+  seaplot()
+ggsave("users_70.jpeg", width = 8, height = 5, units = "in")
+
+seapart(sira_sayisi =  10, kullanici_sayisi = 110) |>
+  seaplot()
+ggsave("users_110.jpeg", width = 8, height = 5, units = "in")
+
+seapart(sira_sayisi =  10, kullanici_sayisi = 200) |>
+  seaplot()
+ggsave("users_200.jpeg", width = 8, height = 5, units = "in")
 
