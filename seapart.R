@@ -113,52 +113,62 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
     seat_x = rep(0, length(seats))
 
     for (i in 1:length(seats)) {
-      if (seats[i] %in% block1){
-        seat_x[i] = seats[i] %% 5
-        if (seat_x[i] == 0) {seat_x[i] = 5}
-      } else if (seats[i] %in% block2) {
-        seat_x[i] = seats[i] %% 10
-        if (seat_x[i] == 0) {seat_x[i] = 10}
-        seat_x[i] = seat_x[i] + 6
+      if (!is.na(seats[i])) {
+        if (seats[i] %in% block1){
+          seat_x[i] = seats[i] %% 5
+          if (seat_x[i] == 0) {seat_x[i] = 5}
+        } else if (seats[i] %in% block2) {
+          seat_x[i] = seats[i] %% 10
+          if (seat_x[i] == 0) {seat_x[i] = 10}
+          seat_x[i] = seat_x[i] + 6
+        } else {
+          seat_x[i] = seats[i] %% 5
+          if (seat_x[i] == 0) {seat_x[i] = 5}
+          seat_x[i]  = seat_x[i] + 17
+        }
       } else {
-        seat_x[i] = seats[i] %% 5
-        if (seat_x[i] == 0) {seat_x[i] = 5}
-        seat_x[i]  = seat_x[i] + 17
+        seat_x[i] = NA
       }
     }
 
     seat_y = rep(0, length(seats))
   
     for (i in 1:length(seats)) {
-      if (seats[i] %in% block1) {
-        for (j in 1:n) {
-          in_interval = (seats[i] > (j - 1) * 5) & (seats[i] <= j * 5)
-          if (in_interval) {
-            seat_y[i] = j
+      if (!is.na(seats[i])) {
+        if (seats[i] %in% block1) {
+          for (j in 1:n) {
+            in_interval = (seats[i] > (j - 1) * 5) & (seats[i] <= j * 5)
+            if (in_interval) {
+              seat_y[i] = j
+            }
           }
-        }
-      } else if (seats[i] %in% block2) {
-        for (j in 1:n) {
-          in_interval = (seats[i] > 5 * n + (j - 1) * 10) & (seats[i] <= 5 * n + j * 10)
-          if (in_interval) {
-            seat_y[i] = j
+        } else if (seats[i] %in% block2) {
+          for (j in 1:n) {
+            in_interval = (seats[i] > 5 * n + (j - 1) * 10) & (seats[i] <= 5 * n + j * 10)
+            if (in_interval) {
+              seat_y[i] = j
+            }
+          }
+        } else {
+          for (j in 1:n) {
+            in_interval = (seats[i] > 15 * n + (j - 1) * 5) & (seats[i] <= 15 * n + j * 5)
+            if (in_interval) {
+              seat_y[i] = j
+            }
           }
         }
       } else {
-        for (j in 1:n) {
-          in_interval = (seats[i] > 15 * n + (j - 1) * 5) & (seats[i] <= 15 * n + j * 5)
-          if (in_interval) {
-            seat_y[i] = j
-          }
-        }
+        seat_y[i] = NA
       }
     }
     return(tibble(seat_x, seat_y))
   }
 
-  grid = situate(seats)
+  grid = situate(seats) |> 
+    rename(seat_x_grid = seat_x, seat_y_grid = seat_y)
+
   seating_data = situate(seat_order)
-  seating_data = bind_cols(grid, seating_data)
+  seating_data = bind_cols(seating_data, grid)
 
   return(seating_data)
 }
