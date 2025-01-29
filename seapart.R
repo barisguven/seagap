@@ -138,7 +138,7 @@ seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 321) {
   return(seating_data)
 }
 
-seating_data = seapart(seat_cap = 80, users = 15)
+seating_data = seapart(seat_cap = 50, users = 15)
 
 seating_data |>
   ggplot(aes(seat_x_grid, seat_y_grid, label = seats)) +
