@@ -143,10 +143,11 @@ seating_data = seapart(seat_cap = 50, users = 15)
 seating_data |>
   ggplot(aes(seat_x_grid, seat_y_grid, label = seats)) +
   geom_point(shape = 0, size = 8) +
-  geom_point(aes(seat_x, seat_y), shape = 15, color = "rosybrown", size = 8) +
+  geom_point(
+    aes(seat_x, seat_y), shape = 15, color = "rosybrown", size = 8
+  ) +
   geom_text() +
   scale_x_discrete(expand = c(2, 2)) +
-  #scale_y_discrete(expand = c(1, 0)) +
   labs(x = NULL, y = NULL) +
   theme(
     axis.ticks = element_blank(), 
