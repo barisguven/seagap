@@ -1,8 +1,9 @@
-library(ggplot2) # for visualization
-library(dplyr) # for visualization
+library(ggplot2) # görselleştirme için
+library(dplyr) # tibble oluşturmak için
 
+# Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde tesadüfi olarak koltuk numarası belirler. Bu tip koltukların tamamı dolduktan sonra kalan koltuklar arasından yine tesadüfi olarak koltuk numarası belirler.
 
-seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 123) {
+seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 321) {
   set.seed(seed)
   seat_cap = seat_cap
   users = users
@@ -68,6 +69,7 @@ seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 123) {
   cat("Bir boşluklu maximum koltuk sayısı: ", max_empty, "\n")
   cat_stars()
 
+  # Koltuk seçme
   seat_order = rep(NA, seat_cap)
 
   for (i in 1:(users)) {
@@ -91,7 +93,7 @@ seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 123) {
     }
   }
 
-  cat(paste("Kalan koltuk sayısı: ", sum(seat_status)))
+  cat(paste("Kalan boş koltuk sayısı: ", sum(seat_status)))
 
   # Oturma verisi oluşturma
   seat_y_grid = rep(0, seat_cap)
@@ -124,26 +126,27 @@ seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 123) {
     }
   }
 
-  #
   seating_data = tibble(
     seats,
     seat_x_grid,
     seat_y_grid,
+    seat_order,
     seat_x,
     seat_y
   )
 
-  return(list(seat_order = seat_order, data = seating_data))
+  return(seating_data)
 }
 
-results = seapart(seat_cap = 50, users = 49)
+seating_data = seapart(seat_cap = 80, users = 15)
 
-results$data |>
+seating_data |>
   ggplot(aes(seat_x_grid, seat_y_grid, label = seats)) +
   geom_point(shape = 0, size = 8) +
   geom_point(aes(seat_x, seat_y), shape = 15, color = "rosybrown", size = 8) +
   geom_text() +
-  scale_x_discrete(expand = c(2, 0)) +
+  scale_x_discrete(expand = c(2, 2)) +
+  #scale_y_discrete(expand = c(1, 0)) +
   labs(x = NULL, y = NULL) +
   theme(
     axis.ticks = element_blank(), 
