@@ -3,7 +3,7 @@ library(dplyr) # tibble oluşturmak için
 
 # Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde tesadüfi olarak koltuk numarası belirler. Bu tip koltukların tamamı dolduktan sonra kalan koltuklar arasından yine tesadüfi olarak koltuk numarası belirler.
 
-seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
+seapart = function(n = 10, users = 20 * n * 0.5, seed = 321, verbose = TRUE) {
   set.seed(seed)
 
   block1 = c(1:(n * 5)) # ilk beşlik blok
@@ -21,7 +21,8 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
   # Mod 5'e göre 1, 3 ve 0 olan beşli blok koltuk numaraları
   seats_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
   # Mod 5'e göre 2, 4, 6, 8 ve 0 olan onlu blok koltuk numaraları
-  seats_mod10 = block2[(block2 %% 10) %in% c(0, 2, 4, 6, 8)]
+  # Ya da çift sayılar
+  seats_mod10 = block2[(block2 %% 2) == 0]
 
   seats_mod5_10 = c(seats_mod5, seats_mod10)
   max_empty = length(seats_mod5_10)
@@ -58,7 +59,7 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
       mod5_10_seat_status = seat_status[seats_mod5_10]
 
       if (sum(mod5_10_seat_status) > 0) {
-        seat_pick = pick_seat("mod5", mod5_10_seat_status)
+        seat_pick = pick_seat("mod5_10", mod5_10_seat_status)
       } else {
         seat_pick = pick_seat("any")
       }
@@ -70,14 +71,16 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
     }
   }
 
-  cat_stars = function() {
-    cat("****************************************\n")
+  if (verbose) {
+    cat_stars = function() {
+      cat("****************************************\n")
+    }
+  
+    cat_stars()
+    cat("Toplam başlangıç boş koltuk sayısı: ", seat_cap, "\n")
+    cat("Bir boşluklu maximum koltuk sayısı: ", max_empty, "\n")
+    cat_stars()
   }
-
-  cat_stars()
-  cat("Toplam başlangıç boş koltuk sayısı: ", seat_cap, "\n")
-  cat("Bir boşluklu maximum koltuk sayısı: ", max_empty, "\n")
-  cat_stars()
 
   # Koltuk seçme
   seat_order = rep(NA, seat_cap)
@@ -87,26 +90,35 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
 
     if (seat_pick > 0) {
       seat_status[seat_pick] = FALSE
-      cat(i, ": ", "Koltuk numaranız: ", seat_pick, "\n", sep = "")
+
+      if (verbose) {
+        cat(i, ": ", "Koltuk numaranız: ", seat_pick, "\n", sep = "")
+      }
 
       if (i <= seat_cap) {seat_order[i] = seat_pick}
 
-      if (i == max_empty) {
-        cat_stars()
-        cat("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", 
-            "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan",
-            "koltukların tamamı dolu!", 
-            "Diğer numaralara geçiliyor...", sep = "\n")
-        cat_stars()
+      if (verbose) {
+        if (i == max_empty) {
+          cat_stars()
+          cat("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", 
+              "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan",
+              "koltukların tamamı dolu!", 
+              "Diğer numaralara geçiliyor...", sep = "\n")
+          cat_stars()
+        }
       }
     } else {
-      cat_stars()
-      cat(i, ": ", "Üzgünüz, şu anda hiç boş koltuğumuz yok.", "\n", sep = "")
+      if (verbose) {
+        cat_stars()
+        cat(i, ": ", "Üzgünüz, şu anda hiç boş koltuğumuz yok.", "\n", sep = "")
+      }
     }
   }
 
-  cat("Kalan boş koltuk sayısı:", sum(seat_status))
-
+  if (verbose) {
+    cat("Kalan boş koltuk sayısı:", sum(seat_status))
+  }
+  
   # Grid ve oturma verisi oluşturma fonksiyonu
   situate = function(seats){
 
@@ -161,27 +173,29 @@ seapart = function(n = 10, users = 20 * n * 0.5, seed = 321) {
         seat_y[i] = NA
       }
     }
-    return(tibble(seat_x, seat_y))
+    return(tibble(seat_x, seat_y, seats))
   }
 
   grid = situate(seats) |> 
     rename(seat_x_grid = seat_x, seat_y_grid = seat_y)
 
-  seating_data = situate(seat_order)
+  seating_data = situate(seat_order) |> 
+    rename(seat_order = seats)
+
   seating_data = bind_cols(seating_data, grid)
 
   return(seating_data)
 }
 
-seating_data = seapart(n = 10, users = 130)
+seating_data = seapart(n = 10, users = 60)
 
 seating_data |>
   ggplot(aes(seat_x_grid, seat_y_grid, label = seats)) +
-  geom_point(shape = 0, size = 8) +
-  geom_point(aes(seat_x, seat_y), shape = 15, color = "rosybrown", size = 8) +
+  geom_point(shape = 0, size = 9.5) +
+  geom_point(
+    aes(seat_x, seat_y), shape = 15, color = "rosybrown", size = 8
+  ) +
   geom_text() +
-  scale_x_discrete(expand = c(2, 2)) +
-  #scale_y_discrete(expand = c(1, 0)) +
   labs(x = NULL, y = NULL) +
   theme(
     axis.ticks = element_blank(), 
