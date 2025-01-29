@@ -16,10 +16,10 @@ seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 321) {
   seats_mod5 = seats[(seats %% 5) %in% c(0, 1, 3)]
   max_empty = length(seats_mod5)
 
-  # Koltuk seçme fonksiyonu
-  pick_seat = function(type = "odd", mod5_seat_status) {
+  # Koltuk seçme fonksiyonları
+  pick_seat = function(type = "mod5", mod5_seat_status) {
 
-    if (type == "odd") {
+    if (type == "mod5") {
       
       empty_seats_mod5 = seats_mod5[mod5_seat_status]
 
@@ -48,7 +48,7 @@ seapart = function(seat_cap = 50, users = seat_cap * 0.5, seed = 321) {
       mod5_seat_status = seat_status[seats_mod5]
 
       if (sum(mod5_seat_status) > 0) {
-        seat_pick = pick_seat("odd", mod5_seat_status)
+        seat_pick = pick_seat("mod5", mod5_seat_status)
       } else {
         seat_pick = pick_seat("any")
       }
