@@ -139,7 +139,15 @@ seapart = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed =
           if (seat_x[i] == 0) {seat_x[i] = 5}
         } else if (seats[i] %in% block2) {
           seat_x[i] = seats[i] %% 10
-          if (seat_x[i] == 0) {seat_x[i] = 10}
+          if (n %% 2 == 0){
+            if (seat_x[i] == 0) {seat_x[i] = 10}
+          } else {
+            if (seat_x[i] >= 6) {
+              seat_x[i] = seat_x[i] %% 5
+            } else {
+              seat_x[i] = seat_x[i] + 5
+            }
+          }
           seat_x[i] = seat_x[i] + 6
         } else {
           seat_x[i] = seats[i] %% 5
