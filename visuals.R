@@ -2,7 +2,7 @@
 
 seapart(sira_sayisi =  10, kullanici_sayisi = 0) |>
   seaplot() + 
-  labs(title = "200 koltuklu boş salon")
+  labs(title = "200 koltuklu boş bir salon")
 ggsave("empty_room.jpeg", width = 8, height = 5, units = "in")
 
 seapart(sira_sayisi =  10, kullanici_sayisi = 70) |>
