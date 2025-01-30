@@ -1,4 +1,5 @@
 *.jpeg
 *.png
 *.html
-*_files/
+.DS_Store
+*README_files/
