@@ -1,5 +1,3 @@
-library(ggplot2) # görselleştirme için
-
 # Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde, bu tip koltukların tamamı dolduktan sonra da kalan koltuklar arasından rastlantısal olarak koltuk numarası belirler.
 
 seapart = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 321, verbose = TRUE) {
@@ -194,49 +192,3 @@ seapart = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed =
 
   return(cbind(seating_data, grid))
 }
-
-seaplot = function(seating_data) {
-  seating_data |>
-  ggplot(aes(seat_x_grid, seat_y_grid, label = seats)) +
-  geom_point(shape = 0, size = 9.5) +
-  geom_point(
-    aes(seat_x, seat_y), shape = 15, color = "rosybrown", 
-    size = 9.5, na.rm = TRUE
-  ) +
-  geom_text() +
-  labs(
-    x = NULL, y = NULL,
-    title = paste0("Raslantısal oturma deseni - ", sum(!is.na(seating_data$seat_order)), " kullanıcı")
-  ) +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.ticks = element_blank(), 
-    axis.text = element_blank(), 
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(),
-    legend.position = "none"
-  )
-}
-
-seapart(sira_sayisi =  10, kullanici_sayisi = 0) |>
-  seaplot() + 
-  labs(title = "200 koltuklu boş salon")
-ggsave("empty_room.jpeg", width = 8, height = 5, units = "in")
-
-seapart(sira_sayisi =  10, kullanici_sayisi = 70) |>
-  seaplot()
-ggsave("users_70.jpeg", width = 8, height = 5, units = "in")
-
-seapart(sira_sayisi =  10, kullanici_sayisi = 90) |>
-  seaplot()
-ggsave("users_90.jpeg", width = 8, height = 5, units = "in")
-
-seapart(sira_sayisi =  10, kullanici_sayisi = 110) |>
-  seaplot()
-ggsave("users_110.jpeg", width = 8, height = 5, units = "in")
-
-seapart(sira_sayisi =  10, kullanici_sayisi = 200) |>
-  seaplot()
-ggsave("users_200.jpeg", width = 8, height = 5, units = "in")
-
