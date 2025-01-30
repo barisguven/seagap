@@ -1,6 +1,6 @@
 # Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde, bu tip koltukların tamamı dolduktan sonra da kalan koltuklar arasından rastlantısal olarak koltuk numarası belirler.
 
-seapart = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 321, verbose = TRUE) {
+seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 321, verbose = TRUE) {
 
   stopifnot(sira_sayisi > 0, kullanici_sayisi >= 0)
   if (sira_sayisi != round(sira_sayisi) | kullanici_sayisi != round(kullanici_sayisi)) {
