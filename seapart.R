@@ -1,13 +1,18 @@
 library(ggplot2) # görselleştirme için
-library(dplyr) # tibble oluşturmak için
 
 # Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde, bu tip koltukların tamamı dolduktan sonra da kalan koltuklar arasından rastlantısal olarak koltuk numarası belirler.
 
-seapart = function(sira_sayisi = 10, kullanici_sayisi = 20 * sira_sayisi * 0.5, seed = 321, verbose = TRUE) {
-  set.seed(seed)
+seapart = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 321, verbose = TRUE) {
 
+  stopifnot(sira_sayisi > 0, kullanici_sayisi >= 0)
+  if (sira_sayisi != round(sira_sayisi) | kullanici_sayisi != round(kullanici_sayisi)) {
+    stop("Lütfen tam sayı kullanın.")
+  }
+
+  set.seed(seed)
   n = sira_sayisi
   users = kullanici_sayisi
+
   block1 = c(1:(n * 5)) # ilk beşlik blok
   block2 = c((5 * n + 1):(15 * n)) # onluk blok
   block3 = c((15 * n + 1):(20 * n)) # ikinci beşlik blok
@@ -87,36 +92,39 @@ seapart = function(sira_sayisi = 10, kullanici_sayisi = 20 * sira_sayisi * 0.5, 
   # Koltuk seçme
   seat_order = rep(NA, seat_cap)
 
-  for (i in 1:(users)) {
-    seat_pick = seat_picker()
-
-    if (seat_pick > 0) {
-      seat_status[seat_pick] = FALSE
-
-      if (verbose) {
-        cat(i, ": ", "Koltuk numaranız: ", seat_pick, "\n", sep = "")
-      }
-
-      if (i <= seat_cap) {seat_order[i] = seat_pick}
-
-      if (verbose) {
-        if (i == max_empty) {
+  if (users != 0) {
+    for (i in 1:(users)) {
+      seat_pick = seat_picker()
+  
+      if (seat_pick > 0) {
+        seat_status[seat_pick] = FALSE
+  
+        if (verbose) {
+          cat(i, ": ", "Koltuk numaranız: ", seat_pick, "\n", sep = "")
+        }
+  
+        if (i <= seat_cap) {seat_order[i] = seat_pick}
+  
+        if (verbose) {
+          if (i == max_empty) {
+            cat_stars()
+            cat("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", 
+                "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan",
+                "koltukların tamamı dolu!", 
+                "Diğer numaralara geçiliyor...", sep = "\n")
+            cat_stars()
+          }
+        }
+      } else {
+        if (verbose) {
           cat_stars()
-          cat("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", 
-              "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan",
-              "koltukların tamamı dolu!", 
-              "Diğer numaralara geçiliyor...", sep = "\n")
-          cat_stars()
+          cat(i, ": ", "Üzgünüz, şu anda hiç boş koltuğumuz yok.", "\n", sep = "")
         }
       }
-    } else {
-      if (verbose) {
-        cat_stars()
-        cat(i, ": ", "Üzgünüz, şu anda hiç boş koltuğumuz yok.", "\n", sep = "")
-      }
     }
+  
   }
-
+ 
   if (verbose) {
     cat("Kalan boş koltuk sayısı:", sum(seat_status))
   }
@@ -175,18 +183,16 @@ seapart = function(sira_sayisi = 10, kullanici_sayisi = 20 * sira_sayisi * 0.5, 
         seat_y[i] = NA
       }
     }
-    return(tibble(seat_x, seat_y, seats))
+    return(data.frame(seat_x, seat_y, seats))
   }
 
-  grid = situate(seats) |> 
-    rename(seat_x_grid = seat_x, seat_y_grid = seat_y)
+  grid = situate(seats)
+  colnames(grid)[c(1, 2)] = c("seat_x_grid", "seat_y_grid")
 
-  seating_data = situate(seat_order) |> 
-    rename(seat_order = seats)
+  seating_data = situate(seat_order)
+  colnames(seating_data)[3] = "seat_order"
 
-  seating_data = bind_cols(seating_data, grid)
-
-  return(seating_data)
+  return(cbind(seating_data, grid))
 }
 
 seaplot = function(seating_data) {
@@ -200,8 +206,7 @@ seaplot = function(seating_data) {
   geom_text() +
   labs(
     x = NULL, y = NULL,
-    title = "Raslantısal oturma deseni",
-    subtitle = paste0("Kullanıcı sayısı: ", sum(!is.na(seating_data$seat_order))) 
+    title = paste0("Raslantısal oturma deseni - ", sum(!is.na(seating_data$seat_order)), " kullanıcı")
   ) +
   theme(
     plot.title = element_text(hjust = 0.5),
@@ -214,13 +219,18 @@ seaplot = function(seating_data) {
   )
 }
 
-seapart(sira_sayisi =  10, kullanici_sayisi = 20) |>
-  seaplot()
-ggsave("users_20.jpeg", width = 8, height = 5, units = "in")
+seapart(sira_sayisi =  10, kullanici_sayisi = 0) |>
+  seaplot() + 
+  labs(title = "200 koltuklu boş salon")
+ggsave("empty_room.jpeg", width = 8, height = 5, units = "in")
 
 seapart(sira_sayisi =  10, kullanici_sayisi = 70) |>
   seaplot()
 ggsave("users_70.jpeg", width = 8, height = 5, units = "in")
+
+seapart(sira_sayisi =  10, kullanici_sayisi = 90) |>
+  seaplot()
+ggsave("users_90.jpeg", width = 8, height = 5, units = "in")
 
 seapart(sira_sayisi =  10, kullanici_sayisi = 110) |>
   seaplot()
