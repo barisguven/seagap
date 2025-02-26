@@ -17,7 +17,6 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   block1_3 = c(block1, block3)
 
   seat_cap = 20 * n
-  users = users
 
   # başlamak için tümüyle boş salon
   seats = c(block1, block2, block3)
