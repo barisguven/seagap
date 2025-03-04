@@ -23,12 +23,12 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   seat_status = rep(TRUE, times = seat_cap)
 
   # Mod 5'e göre 1, 3 ve 0 olan beşli blok koltuk numaraları
-  seats_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
+  block1_3_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
   # Mod 5'e göre 2, 4, 6, 8 ve 0 olan onlu blok koltuk numaraları
   # Ya da çift sayılar
-  seats_mod10 = block2[(block2 %% 2) == 0]
+  block2_mod10 = block2[(block2 %% 2) == 0]
 
-  seats_mod5_10 = c(seats_mod5, seats_mod10)
+  seats_mod5_10 = c(block1_3_mod5, block2_mod10)
   max_empty = length(seats_mod5_10)
 
   # Koltuk seçme fonksiyonları
