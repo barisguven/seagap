@@ -8,40 +8,40 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   }
 
   set.seed(seed)
-  n = sira_sayisi
-  users = kullanici_sayisi
+  n_row = sira_sayisi
+  n_users = kullanici_sayisi
 
-  block1 = c(1:(n * 5)) # ilk beşlik blok
-  block2 = c((5 * n + 1):(15 * n)) # onluk blok
-  block3 = c((15 * n + 1):(20 * n)) # ikinci beşlik blok
+  block1 = c(1:(n_row * 5)) # ilk beşlik blok
+  block2 = c((5 * n_row + 1):(15 * n_row)) # onluk blok
+  block3 = c((15 * n_row + 1):(20 * n_row)) # ikinci beşlik blok
   block1_3 = c(block1, block3)
 
-  seat_cap = 20 * n
+  seat_cap = 20 * n_row
 
   # başlamak için tümüyle boş salon
   seats = c(block1, block2, block3)
   seat_status = rep(TRUE, times = seat_cap)
 
   # Mod 5'e göre 1, 3 ve 0 olan beşli blok koltuk numaraları
-  seats_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
+  block1_3_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
   # Mod 5'e göre 2, 4, 6, 8 ve 0 olan onlu blok koltuk numaraları
   # Ya da çift sayılar
-  seats_mod10 = block2[(block2 %% 2) == 0]
+  block2_mod10 = block2[(block2 %% 2) == 0]
 
-  seats_mod5_10 = c(seats_mod5, seats_mod10)
-  max_empty = length(seats_mod5_10)
+  seats_gap = c(block1_3_mod5, block2_mod10)
+  max_empty = length(seats_gap)
 
   # Koltuk seçme fonksiyonları
-  pick_seat = function(type = "mod5_10", mod5_10_seat_status) {
+  pick_seat = function(type = "mod5_10", gap_status) {
 
     if (type == "mod5_10") {
       
-      empty_seats_mod5_10 = seats_mod5_10[mod5_10_seat_status]
+      empty_seats_gap = seats_gap[gap_status]
 
-      if (length(empty_seats_mod5_10) > 1) {
-        seat_pick = sample(empty_seats_mod5_10, 1)
+      if (length(empty_seats_gap) > 1) {
+        seat_pick = sample(empty_seats_gap, 1)
       } else {
-        seat_pick = empty_seats_mod5_10[1]
+        seat_pick = empty_seats_gap[1]
       }
 
       return(seat_pick)
@@ -60,10 +60,10 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   seat_picker = function() {
     if (sum(seat_status) > 0) {
 
-      mod5_10_seat_status = seat_status[seats_mod5_10]
+      gap_status = seat_status[seats_gap]
 
-      if (sum(mod5_10_seat_status) > 0) {
-        seat_pick = pick_seat("mod5_10", mod5_10_seat_status)
+      if (sum(gap_status) > 0) {
+        seat_pick = pick_seat("mod5_10", gap_status)
       } else {
         seat_pick = pick_seat("any")
       }
@@ -89,8 +89,8 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   # Koltuk seçme
   seat_order = rep(NA, seat_cap)
 
-  if (users != 0) {
-    for (i in 1:(users)) {
+  if (n_users != 0) {
+    for (i in 1:(n_users)) {
       seat_pick = seat_picker()
   
       if (seat_pick > 0) {
@@ -138,7 +138,7 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
           if (seat_x[i] == 0) {seat_x[i] = 5}
         } else if (seats[i] %in% block2) {
           seat_x[i] = seats[i] %% 10
-          if (n %% 2 == 0){
+          if (n_row %% 2 == 0){
             if (seat_x[i] == 0) {seat_x[i] = 10}
           } else {
             if (seat_x[i] >= 6) {
@@ -163,22 +163,22 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
     for (i in 1:length(seats)) {
       if (!is.na(seats[i])) {
         if (seats[i] %in% block1) {
-          for (j in 1:n) {
+          for (j in 1:n_row) {
             in_interval = (seats[i] > (j - 1) * 5) & (seats[i] <= j * 5)
             if (in_interval) {
               seat_y[i] = j
             }
           }
         } else if (seats[i] %in% block2) {
-          for (j in 1:n) {
-            in_interval = (seats[i] > 5 * n + (j - 1) * 10) & (seats[i] <= 5 * n + j * 10)
+          for (j in 1:n_row) {
+            in_interval = (seats[i] > 5 * n_row + (j - 1) * 10) & (seats[i] <= 5 * n_row + j * 10)
             if (in_interval) {
               seat_y[i] = j
             }
           }
         } else {
-          for (j in 1:n) {
-            in_interval = (seats[i] > 15 * n + (j - 1) * 5) & (seats[i] <= 15 * n + j * 5)
+          for (j in 1:n_row) {
+            in_interval = (seats[i] > 15 * n_row + (j - 1) * 5) & (seats[i] <= 15 * n_row + j * 5)
             if (in_interval) {
               seat_y[i] = j
             }
