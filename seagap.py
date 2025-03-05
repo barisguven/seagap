@@ -12,6 +12,8 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
       raise ValueError('Negatif olmayan tam sayı bekliyordum.')
     elif type(kullanici_sayisi) is not int or type(sira_sayisi) is not int:
       raise TypeError('Tam sayı bekliyordum.')
+    elif type(verbose) is not bool:
+      raise TypeError('True ya da False bekliyordum.')
   except Exception:
     raise
 
@@ -87,7 +89,7 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
   # Seçilen koltukları tutacak liste
   seat_order = [np.nan] * seat_cap
 
-  # Sıfırdan büyük kullanıcı sayıları içim koltuk seçme
+  # Sıfırdan büyük kullanıcı sayıları için koltuk seçme
   if n_users != 0:
     for user in range(1, n_users + 1, 1):
       seat_pick = seat_picker()
