@@ -5,17 +5,14 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
   Bu fonksiyon ilk önce iki kullanıcı arasında bir boşluk kalacak şekilde, bu tip koltukların tamamı dolduktan sonra da kalan koltuklar arasından rastlantısal olarak koltuk numarası belirler.
   """
 
-  try:
-    if sira_sayisi <= 0:
-      raise ValueError('Pozitif tam sayı bekliyordum.')
-    elif kullanici_sayisi < 0:
-      raise ValueError('Negatif olmayan tam sayı bekliyordum.')
-    elif type(kullanici_sayisi) is not int or type(sira_sayisi) is not int:
-      raise TypeError('Tam sayı bekliyordum.')
-    elif type(verbose) is not bool:
-      raise TypeError('True ya da False bekliyordum.')
-  except Exception:
-    raise
+  if sira_sayisi <= 0:
+    raise ValueError('Pozitif tam sayı bekliyordum.')
+  elif kullanici_sayisi < 0:
+    raise ValueError('Negatif olmayan tam sayı bekliyordum.')
+  elif not isinstance(kullanici_sayisi, int) or not isinstance(sira_sayisi, int):
+    raise TypeError('Pozitif tam sayı bekliyordum.')
+  elif not isinstance(verbose, bool):
+    raise TypeError('True ya da False bekliyordum.')
 
   rg = np.random.default_rng(seed)
   n_row = sira_sayisi
@@ -109,6 +106,7 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
               print(50 * "*")
               print("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan", "koltukların tamamı dolu!", "Diğer numaralara geçiliyor...", sep = "\n")
               print(50 * "*") 
+              
       elif seat_pick == -1:
         if verbose:
           if user == seat_cap + 1:
