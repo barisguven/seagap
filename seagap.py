@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
   """
@@ -106,9 +107,77 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
               print(50 * "*")
               print("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan", "koltukların tamamı dolu!", "Diğer numaralara geçiliyor...", sep = "\n")
               print(50 * "*") 
-              
+
       elif seat_pick == -1:
         if verbose:
           if user == seat_cap + 1:
             print(50 * "*")
           print(user, ": ", "Üzgünüz, şu anda hiç boş koltuğumuz yok.", sep = "")
+
+  def situate(seats):
+    """Grid ve oturma verisi oluşturma fonksiyonu"""
+
+    seat_x = np.zeros(len(seats))
+
+    for i in range(len(seats)):
+      if not np.isnan(seats[i]):
+        if np.isin(seats[i], block1):
+          seat_x[i] = seats[i] % 5
+          if seat_x[i] == 0:
+            seat_x[i] = 5
+        elif np.isin(seats[i], block2):
+          seat_x[i] = seats[i] % 10
+          if n_row % 2 == 0:
+            if seat_x[i] == 0:
+              seat_x[i] = 10
+            else:
+              if seat_x[i] >= 6:
+                seat_x[i] = seat_x[i] % 5
+              else:
+                seat_x[i] += 5
+          seat_x[i] += 6
+        else:
+          seat_x[i] = seat_x[i] % 5
+          if seat_x[i] == 0:
+            seat_x[i] = 5
+          seat_x[i] += 17
+      else:
+        seat_x[i] = np.nan
+
+    seat_y = np.zeros(len(seats))
+
+    for i in range(len(seats)):
+      if not np.isnan(seats[i]):
+        if np.isin(seats[i], block1):
+          for j in range(1, 1 + n_row):
+            in_interval = (seats[i] > (j - 1) * 5) and (seats[i] <= j * 5)
+            if in_interval:
+              seat_y[i] = j
+        elif np.isin(seats[i], block2):
+          for j in range(1, 1 + n_row):
+            in_interval = (seats[i] > 5 * n_row + (j - 1) * 10) and (seats[i] <= 5 * n_row + j * 10)
+            if in_interval:
+              seat_y[i] = j
+        else:
+          for j in range(1, 1 + n_row):
+            in_interval = (seats[i] > 15 * n_row + (j - 1) * 5) and (seats[i] <= 15 * n_row + j * 5)
+            if in_interval:
+              seat_y[i] = j
+      else:
+        seat_y[i] = np.nan
+
+    return pd.DataFrame(
+      {
+        "seats": seats,
+        "seat_x": seat_x,
+        "seat_y": seat_y,
+      }
+    )
+
+  grid = situate(seats)
+  grid.rename(columns={"seat_x": "seat_x_grid", "seat_y": "seat_y_grid"},inplace=True)
+
+  seating_data = situate(seat_order)
+  seating_data.rename(columns={"seats": "seat_order"}, inplace=True)
+
+  return pd.concat([seating_data, grid], axis=1)
