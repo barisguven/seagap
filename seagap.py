@@ -130,14 +130,14 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
           if n_row % 2 == 0:
             if seat_x[i] == 0:
               seat_x[i] = 10
+          else:
+            if seat_x[i] >= 6:
+              seat_x[i] = seat_x[i] % 5
             else:
-              if seat_x[i] >= 6:
-                seat_x[i] = seat_x[i] % 5
-              else:
-                seat_x[i] += 5
+              seat_x[i] += 5
           seat_x[i] += 6
         else:
-          seat_x[i] = seat_x[i] % 5
+          seat_x[i] = seats[i] % 5
           if seat_x[i] == 0:
             seat_x[i] = 5
           seat_x[i] += 17
