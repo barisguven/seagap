@@ -24,8 +24,10 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
 
   # Mod 5'e göre 1, 3 ve 0 olan beşli blok koltuk numaraları
   block1_3_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
+  block1_3_mod5 = block1_3[(block1_3 %% 5) %in% c(0, 1, 3)]
   # Mod 5'e göre 2, 4, 6, 8 ve 0 olan onlu blok koltuk numaraları
   # Ya da çift sayılar
+  block2_mod10 = block2[(block2 %% 2) == 0]
   block2_mod10 = block2[(block2 %% 2) == 0]
 
   seats_gap = c(block1_3_mod5, block2_mod10)
