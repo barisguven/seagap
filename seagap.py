@@ -19,9 +19,9 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
   n_row = sira_sayisi
   n_users = kullanici_sayisi
 
-  block1 = np.arange(1, n_row*5 + 1, 1)
-  block2 = np.arange(n_row*5 + 1, 15*n_row + 1, 1)
-  block3 = np.arange(15*n_row + 1, 20*n_row + 1, 1)
+  block1 = np.arange(1, n_row * 5 + 1)
+  block2 = np.arange(n_row * 5 + 1, 15 * n_row + 1)
+  block3 = np.arange(15 * n_row + 1, 20 * n_row + 1)
   block1_3 = np.hstack((block1, block3))
 
   seat_cap = 20 * n_row
@@ -89,25 +89,21 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
 
   # Sıfırdan büyük kullanıcı sayıları için koltuk seçme
   if n_users != 0:
-    for user in range(1, n_users + 1, 1):
+    for user in range(1, n_users + 1):
       seat_pick = seat_picker()
-      
       if seat_pick > 0:
         seat_status[seat_pick - 1] = False
-        
         if verbose:
           print(user, ". kullanıcı", " --> ", "Koltuk numaranız: ", seat_pick, sep="")
           if user == seat_cap:
             print("Kalan boş koltuk sayısı:", sum(seat_status))
-
         if user <= seat_cap:
           seat_order[user - 1] = seat_pick
           if verbose:
             if user == max_empty:
               print(50 * "*")
               print("1. ve 3. bloklarda mod 5'e göre 0, 1 ve 3 olan ve", "2. blokta mod 10'a göre 0, 2, 4, 6 ve 8 olan", "koltukların tamamı dolu!", "Diğer numaralara geçiliyor...", sep = "\n")
-              print(50 * "*") 
-
+              print(50 * "*")
       elif seat_pick == -1:
         if verbose:
           if user == seat_cap + 1:
@@ -117,7 +113,7 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
   def situate(seats):
     """Grid ve oturma verisi oluşturma fonksiyonu"""
 
-    seat_x = np.zeros(len(seats))
+    seat_x = np.array([np.nan] * len(seats))
 
     for i in range(len(seats)):
       if not np.isnan(seats[i]):
@@ -141,10 +137,8 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
           if seat_x[i] == 0:
             seat_x[i] = 5
           seat_x[i] += 17
-      else:
-        seat_x[i] = np.nan
 
-    seat_y = np.zeros(len(seats))
+    seat_y = np.array([np.nan] * len(seats))
 
     for i in range(len(seats)):
       if not np.isnan(seats[i]):
@@ -163,15 +157,14 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
             in_interval = (seats[i] > 15 * n_row + (j - 1) * 5) and (seats[i] <= 15 * n_row + j * 5)
             if in_interval:
               seat_y[i] = j
-      else:
-        seat_y[i] = np.nan
 
     return pd.DataFrame(
       {
         "seats": seats,
         "seat_x": seat_x,
         "seat_y": seat_y,
-      }
+      },
+      dtype=pd.Int64Dtype()
     )
 
   grid = situate(seats)
