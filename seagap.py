@@ -45,7 +45,7 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
     """
     Raslantısal koltuk seçen fonksiyon.
 
-    Eğer gap=True ise, bir boşluk bırakacak şekilde, değilse herhangi bir koltuk numarası seçer. 
+    Eğer gap=True ise bir boşluk bırakacak şekilde, değilse herhangi bir koltuk numarası seçer. 
     """
     if gap:
       empty_seats_w_gap = seats_w_gap[gap_status]
