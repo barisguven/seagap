@@ -30,20 +30,20 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   block2_mod10 = block2[(block2 %% 2) == 0]
   block2_mod10 = block2[(block2 %% 2) == 0]
 
-  seats_gap = c(block1_3_mod5, block2_mod10)
-  max_empty = length(seats_gap)
+  seats_w_gap = c(block1_3_mod5, block2_mod10)
+  max_empty = length(seats_w_gap)
 
   # Koltuk seçme fonksiyonları
-  pick_seat = function(type = "mod5_10", gap_status) {
+  pick_seat = function(gap_status, gap) {
 
-    if (type == "mod5_10") {
+    if (gap) {
       
-      empty_seats_gap = seats_gap[gap_status]
+      empty_seats_w_gap = seats_w_gap[gap_status]
 
-      if (length(empty_seats_gap) > 1) {
-        seat_pick = sample(empty_seats_gap, 1)
+      if (length(empty_seats_w_gap) > 1) {
+        seat_pick = sample(empty_seats_w_gap, 1)
       } else {
-        seat_pick = empty_seats_gap[1]
+        seat_pick = empty_seats_w_gap[1]
       }
 
       return(seat_pick)
@@ -62,12 +62,12 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   seat_picker = function() {
     if (sum(seat_status) > 0) {
 
-      gap_status = seat_status[seats_gap]
+      gap_status = seat_status[seats_w_gap]
 
       if (sum(gap_status) > 0) {
-        seat_pick = pick_seat("mod5_10", gap_status)
+        seat_pick = pick_seat(gap_status, gap=TRUE)
       } else {
-        seat_pick = pick_seat("any")
+        seat_pick = pick_seat(gap_status, gap=FALSE)
       }
 
       return(seat_pick)
@@ -131,7 +131,7 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   # Grid ve oturma verisi oluşturma fonksiyonu
   situate = function(seats){
 
-    seat_x = rep(0, length(seats))
+    seat_x = rep(NA, length(seats))
 
     for (i in 1:length(seats)) {
       if (!is.na(seats[i])) {
@@ -155,12 +155,10 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
           if (seat_x[i] == 0) {seat_x[i] = 5}
           seat_x[i]  = seat_x[i] + 17
         }
-      } else {
-        seat_x[i] = NA
       }
     }
 
-    seat_y = rep(0, length(seats))
+    seat_y = rep(NA, length(seats))
   
     for (i in 1:length(seats)) {
       if (!is.na(seats[i])) {
@@ -186,8 +184,6 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
             }
           }
         }
-      } else {
-        seat_y[i] = NA
       }
     }
     return(data.frame(seat_x, seat_y, seats))
