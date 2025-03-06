@@ -11,9 +11,9 @@ seagap = function(sira_sayisi = 10, kullanici_sayisi = 10 * sira_sayisi, seed = 
   n_row = sira_sayisi
   n_users = kullanici_sayisi
 
-  block1 = c(1:(n_row * 5)) # ilk beşlik blok
-  block2 = c((5 * n_row + 1):(15 * n_row)) # onluk blok
-  block3 = c((15 * n_row + 1):(20 * n_row)) # ikinci beşlik blok
+  block1 = c(1:(n_row * 5)) # ilk beşli blok
+  block2 = c((5 * n_row + 1):(15 * n_row)) # onlu blok
+  block3 = c((15 * n_row + 1):(20 * n_row)) # ikinci beşli blok
   block1_3 = c(block1, block3)
 
   seat_cap = 20 * n_row

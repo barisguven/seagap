@@ -19,9 +19,9 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
   n_row = sira_sayisi
   n_users = kullanici_sayisi
 
-  block1 = np.arange(1, n_row * 5 + 1)
-  block2 = np.arange(n_row * 5 + 1, 15 * n_row + 1)
-  block3 = np.arange(15 * n_row + 1, 20 * n_row + 1)
+  block1 = np.arange(1, n_row * 5 + 1)  # ilk beşli blok
+  block2 = np.arange(n_row * 5 + 1, 15 * n_row + 1)  # onlu blok
+  block3 = np.arange(15 * n_row + 1, 20 * n_row + 1)  # ikinci beşli blok 
   block1_3 = np.hstack((block1, block3))
 
   seat_cap = 20 * n_row
