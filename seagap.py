@@ -50,14 +50,14 @@ def seagap(sira_sayisi=10, kullanici_sayisi=10*10, seed=321, verbose=True):
     if gap:
       empty_seats_w_gap = seats_w_gap[gap_status]
       if (len(empty_seats_w_gap) > 1):
-        seat_pick = empty_seats_w_gap[rg.integers(0, len(empty_seats_w_gap), 1)][0]
+        seat_pick = rg.choice(empty_seats_w_gap, 1)[0]
       else:
         seat_pick = empty_seats_w_gap[0]
       return seat_pick
     else:
       empty_seats = seats[seat_status]
       if (len(empty_seats) > 1):
-        return empty_seats[rg.integers(0, len(empty_seats), 1)][0]
+        return rg.choice(empty_seats, 1)[0]
       else:
         return empty_seats[0]
 
